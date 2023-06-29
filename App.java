@@ -19,8 +19,9 @@ public class App extends JPanel implements ActionListener, Constants {
     public void start() {
         timer = new Timer(DELAY, this);
         timer.start();
-        objects.add(new Object(400, 300, (int) Math.pow(10,30), Color.WHITE));
-        objects.add(new Object(400, 100, (int) Math.pow(10,20), Color.RED));
+        for (int i = 0; i < MAX_OBJECTS; i++) {
+            objects.add(new Object((float) (Math.random() * Constants.WIDTH), (float) (Math.random() * Constants.HEIGHT), (float) (Math.random() * 1000), colors[(int) (Math.random() * colors.length)]));
+        }
     }
     // Paints the JPanel
     public void paintComponent(Graphics g) {

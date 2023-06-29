@@ -2,19 +2,22 @@ import java.awt.*;
 import java.util.List;
 
 public class Object {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
     private float xVelocity = 0;
     private float yVelocity = 0;
     private final double mass;
-    private final int radius = 10;
+    private final float radius;
     private final Color color;
+    private final int maxVelocity;
 
-    public Object(int x, int y, int mass, Color color) {
+    public Object(float x, float y, float mass, Color color) {
         this.x = x;
         this.y = y;
         this.mass = mass;
         this.color = color;
+        this.radius = (float) Math.pow(mass, (double) 1 /3);
+        this.maxVelocity = (int) (80 / radius);
     }
 
     private float[] attraction(Object object) {
@@ -35,27 +38,43 @@ public class Object {
                 float[] force = attraction(object);
                 totalForceX += force[0];
                 totalForceY += force[1];
-                System.out.println(totalForceX + " " + totalForceY);
             }
         }
         xVelocity += totalForceX / mass;
         yVelocity += totalForceY / mass;
-        System.out.println(xVelocity + " " + yVelocity);
+
+        if (xVelocity > maxVelocity) xVelocity = maxVelocity;
+        if (xVelocity < -maxVelocity) xVelocity = -maxVelocity;
+        if (yVelocity > maxVelocity) yVelocity = maxVelocity;
+        if (yVelocity < -maxVelocity) yVelocity = -maxVelocity;
 
         x += xVelocity;
         y += yVelocity;
-        System.out.println(x + " " + y);
+
+        if (x + radius >= Constants.WIDTH) {
+            x = Constants.WIDTH - radius;
+            xVelocity = (float) (-0.5 * xVelocity);
+        } else if (x - radius <= 0) {
+            x = radius;
+            xVelocity = (float) (-0.5 * xVelocity);
+        } else if (y + radius >= Constants.HEIGHT) {
+            y = Constants.HEIGHT - radius;
+            yVelocity = (float) (-0.5 * yVelocity);
+        } else if (y - radius <= 0) {
+            y = radius;
+            yVelocity = (float) (-0.5 * yVelocity);
+        }
     }
 
     public void draw(Graphics g) {
         g.setColor(color);
-        g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
+        g.fillOval((int) (x - radius), (int) (y - radius), (int) (radius * 2), (int) (radius * 2));
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
-    public int getY() {
+    public float getY() {
         return y;
     }
     public double getMass() {
